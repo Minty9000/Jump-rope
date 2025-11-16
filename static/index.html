@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Jump Rope Stopwatch</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #0f172a;
+      color: white;
+      font-family: system-ui;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+    }
+
+    .big {
+      font-size: 4rem;
+      font-weight: bold;
+    }
+
+    .sub {
+      font-size: 1rem;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: #1e293b;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border: 1px solid #334155;
+      transition: 0.2s;
+    }
+    .btn:hover {
+      background: #334155;
+    }
+
+    #laps {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: left;
+    }
+
+    .lap-entry {
+      padding: 10px;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      color: #cbd5e1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="big" id="jumpCount">0</div>
+  <div class="sub">Total Jumps</div>
+
+  <div class="big" id="timer">00:00</div>
+  <div class="sub">Elapsed Time</div>
+
+  <div>
+    <button class="btn" onclick="sendCommand('start')">Start</button>
+    <button class="btn" onclick="sendCommand('stop')">Stop</button>
+    <button class="btn" onclick="sendCommand('reset')">Reset</button>
+    <button class="btn" onclick="sendCommand('lap')">Lap</button>
+  </div>
+
+  <div id="laps"></div>
+
+<script>
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+async function update() {
+  const c = await fetch("/jump_count").then(r => r.json());
+  document.getElementById("jumpCount").textContent = c.count;
+
+  const t = await fetch("/timer").then(r => r.json());
+  document.getElementById("timer").textContent = formatTime(t.time);
+
+  const lapData = await fetch("/laps").then(r => r.json());
+  let lapHtml = "";
+  lapData.laps.forEach((lap, i) => {
+    lapHtml += `
+      <div class="lap-entry">
+        <span>Lap ${i+1}</span>
+        <span>${formatTime(lap.time)} – ${lap.jumps} jumps</span>
+      </div>`;
+  });
+  document.getElementById("laps").innerHTML = lapHtml;
+}
+
+async function sendCommand(cmd) {
+  await fetch(`/${cmd}`, { method: "POST" });
+}
+
+setInterval(update, 200);
+update();
+</script>
+
+</body>
+</html>
