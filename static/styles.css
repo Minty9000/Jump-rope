@@ -1,0 +1,144 @@
+/* GENERAL THEME */
+body {
+  margin: 0;
+  padding: 30px;
+  font-family: system-ui, sans-serif;
+  background: linear-gradient(135deg, #d9f4f4, #c7e7e7, #b6dddd);
+  color: #0f172a;
+  text-align: center;
+}
+
+/* MAIN TITLE */
+.title {
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #0d2c2c;
+}
+
+/* WEIGHT INPUT SECTION */
+.weight-box {
+  margin-bottom: 25px;
+}
+
+.weight-box label {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #103838;
+}
+
+.weight-box input {
+  padding: 10px 15px;
+  font-size: 1.1rem;
+  border-radius: 12px;
+  border: 2px solid #7fbebe;
+  outline: none;
+  margin-top: 8px;
+  background: white;
+  transition: 0.2s;
+}
+
+.weight-box input:focus {
+  border-color: #5ca9a9;
+  background: #f5ffff;
+}
+
+/* STATS GRID */
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  max-width: 650px;
+  margin: 0 auto 25px auto;
+}
+
+/* STAT CARDS */
+.stat-card {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 25px;
+  border-radius: 18px;
+  border: 2px solid rgba(130, 190, 190, 0.45);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: 0.25s;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 18px rgba(0,0,0,0.18);
+}
+
+.big {
+  font-size: 3.4rem;
+  font-weight: 700;
+  color: #0f2b2b;
+}
+
+.sub {
+  font-size: 1rem;
+  color: #1e4040;
+}
+
+/* BUTTONS */
+.btn-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn {
+  background: #8dd1d1;
+  border: 2px solid #6ebcbc;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #062f2f;
+  font-weight: 600;
+  transition: background 0.2s, transform 0.15s;
+}
+
+/* hover effect */
+.btn:hover {
+  background: #7cc5c5;
+}
+
+/* PRESS-DOWN animation */
+.btn:active {
+  background: #5fa8a8; /* darker mint */
+  transform: scale(0.94);   /* shrink slightly */
+  border-color: #559999;
+}
+
+/* LAPS */
+.subheader {
+  margin-top: 25px;
+  font-weight: 700;
+  color: #103434;
+}
+
+#laps {
+  margin-top: 10px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 12px;
+}
+
+.lap-entry {
+  padding: 12px;
+  border-bottom: 1px solid #8ec8c8;
+  display: flex;
+  justify-content: space-between;
+  color: #0f2b2b;
+}
+.graph-container {
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto 40px auto;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 20px;
+  border-radius: 18px;
+  border: 2px solid rgba(130, 190, 190, 0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

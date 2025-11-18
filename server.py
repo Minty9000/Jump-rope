@@ -22,33 +22,38 @@ cooldown_frames = int(cooldown_time / FRAME_DURATION)
 counting_enabled = False
 jump_count = 0
 cooldown_counter = 0
+last_jump_time = time.time()
 
 
 ### AUDIO CALLBACK ###
 
 def audio_callback(indata, frames, time_info, status):
-    global jump_count, cooldown_counter
-    if not counting_enabled:
-        return
+    global jump_count, cooldown_counter, counting_enabled
+
     if status:
         print(status)
+
+    # If we’re not in “counting” mode (timer not running), ignore audio
+    if not counting_enabled:
+        return
+
     audio_chunk = indata[:, 0]
 
     # Gain
     GAIN = 7.0
     audio_chunk = audio_chunk * GAIN
 
-    # 1. RMS
+    # 1. RMS energy filter (ignore very quiet chunks)
     rms = np.sqrt(np.mean(audio_chunk**2))
     if rms < 0.03:
         return
 
-    # 2. Centroid
+    # 2. Spectral centroid (sharp/high frequency impact)
     centroid = librosa.feature.spectral_centroid(y=audio_chunk, sr=sr)[0].mean()
     if centroid < 3000:
         return
 
-    # 3. MFCC sim
+    # 3. MFCC similarity
     chunk_mfcc = librosa.feature.mfcc(y=audio_chunk, sr=sr, n_mfcc=13)
     chunk_vec = np.mean(chunk_mfcc, axis=1)
 
@@ -56,6 +61,7 @@ def audio_callback(indata, frames, time_info, status):
         np.linalg.norm(chunk_vec) * np.linalg.norm(ref_vec)
     )
 
+    # Cooldown so 1 hit = 1 jump
     if cooldown_counter > 0:
         cooldown_counter -= 1
         return
@@ -97,14 +103,18 @@ def get_elapsed_time():
 
 
 @app.route("/")
-def index():
+def home():
     return send_from_directory("static", "index.html")
-
+@app.route("/<path:path>")
+def static_proxy(path):
+    return send_from_directory("static", path)
 
 @app.route("/jump_count")
-def get_jump():
-    return jsonify({"count": jump_count})
-
+def jump_count_route():
+    return jsonify({
+        "count": jump_count,
+        "counting": counting_enabled   # << add this
+    })
 
 @app.route("/timer")
 def timer():
@@ -147,7 +157,6 @@ def reset_timer():
     jump_count = 0
     return jsonify({"status": "reset"})
 
-
 @app.route("/lap", methods=["POST"])
 def lap():
     laps.append({
@@ -155,6 +164,13 @@ def lap():
         "jumps": jump_count
     })
     return jsonify({"status": "lap_added"})
+@app.route("/pace")
+def pace():
+    t = get_elapsed_time()
+    if t < 1:
+        return jsonify({"pace": 0})
+    pace = round(jump_count / (t / 60))  # jumps per minute
+    return jsonify({"pace": round(pace, 2)})
 
 
 ### RUN EVERYTHING ###

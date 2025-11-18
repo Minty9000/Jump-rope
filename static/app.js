@@ -1,0 +1,119 @@
+let graphCounter = 0;
+function formatTime(seconds) {
+  const m = Math.floor(seconds / 60).toString().padStart(2, "0");
+  const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+// Convert lbs → kg
+function lbsToKg(lbs) {
+  return lbs * 0.453592;
+}
+
+// Calorie calculation function
+function calculateCalories(pace, weightKg, elapsedSec) {
+  if (elapsedSec === 0 || weightKg === 0) return 0;
+
+  // MET formula based on pace
+  const MET = 8 + (pace / 20);
+  const minutes = elapsedSec / 60;
+
+  return Math.round(0.0175 * MET * weightKg * minutes);
+}
+
+async function update() {
+  const c = await fetch("/jump_count").then(r => r.json());
+  const t = await fetch("/timer").then(r => r.json());
+  const p = await fetch("/pace").then(r => r.json());
+  const laps = await fetch("/laps").then(r => r.json());
+  const counting = c.counting;
+
+  const weightLbs = Number(document.getElementById("weightInput").value) || 0;
+  const weightKg = lbsToKg(weightLbs);
+
+  const calories = calculateCalories(p.pace, weightKg, t.time);
+
+  document.getElementById("jumpCount").textContent = c.count;
+  document.getElementById("timer").textContent = formatTime(t.time);
+  document.getElementById("pace").textContent = `${p.pace} JPM`;
+  document.getElementById("calories").textContent = calories;
+
+  // Laps
+  let lapHtml = "";
+  laps.laps.forEach((lap, i) => {
+    lapHtml += `
+      <div class="lap-entry">
+        <span>Lap ${i+1}</span>
+        <span>${formatTime(lap.time)} – ${lap.jumps} jumps</span>
+      </div>`;
+  });
+  // update pace graph
+  document.getElementById("laps").innerHTML = lapHtml;
+  if (counting) {
+    graphCounter++;
+
+    // Update graph every 15 seconds (75 cycles of 200ms)
+    if (graphCounter >= 75) {
+        timeLabels.push(t.time);
+        paceData.push(p.pace);
+
+        if (timeLabels.length > 120) {
+            timeLabels.shift();
+            paceData.shift();
+        }
+
+        chart.update();
+        graphCounter = 0; // reset timer
+    }
+}
+}
+
+async function sendCommand(cmd) {
+  await fetch(`/${cmd}`, { method: "POST" });
+}
+
+// Update the UI every 200ms
+setInterval(update, 300);
+update();
+
+// === PACE GRAPH ===
+
+let paceData = [];
+let timeLabels = [];
+let chart;
+
+// Initialize the chart on page load
+function initChart() {
+  const ctx = document.getElementById("paceChart").getContext("2d");
+
+  chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: timeLabels,
+      datasets: [{
+        label: "Pace (JPM)",
+        data: paceData,
+        borderColor: "#5fa8a8",
+        backgroundColor: "rgba(143, 207, 207, 0.25)",
+        borderWidth: 3,
+        fill: true,
+        tension: 0.25
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { title: { display: false } },
+        y: { beginAtZero: true }
+      },
+      plugins: {
+        legend: {
+          labels: { color: "#0f2b2b" }
+        }
+      }
+    }
+  });
+}
+
+window.onload = initChart;
