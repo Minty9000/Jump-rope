@@ -1,4 +1,5 @@
 let graphCounter = 0;
+let elapsedSeconds = 0;   // X-axis will now be 0, 10, 20, 30, ...
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
   const s = Math.floor(seconds % 60).toString().padStart(2, "0");
@@ -49,35 +50,65 @@ async function update() {
   });
   // update pace graph
   document.getElementById("laps").innerHTML = lapHtml;
-  if (counting) {
-    graphCounter++;
 
-    // Update graph every 15 seconds (75 cycles of 200ms)
-    if (graphCounter >= 75) {
-        timeLabels.push(t.time);
-        paceData.push(p.pace);
-
-        if (timeLabels.length > 120) {
-            timeLabels.shift();
-            paceData.shift();
-        }
-
-        chart.update();
-        graphCounter = 0; // reset timer
-    }
+  //reset graph when stopped and cleared
+  if (!counting && t.time === 0 && c.count === 0) {
+    timeLabels.length = 0;
+    paceData.length = 0;
+    elapsedSeconds = 0;
+    graphCounter = 0;
+    chart.update();
 }
+
+  if (counting) {
+      graphCounter++;
+      // Update graph every 10 sec (50 cycles of 200ms)
+      if (graphCounter >= 42) {
+          elapsedSeconds += 10;      // clean X-axis step
+          timeLabels.push(elapsedSeconds);
+          paceData.push(p.pace);
+          if (timeLabels.length > 120) {
+              timeLabels.shift();
+              paceData.shift();
+          }
+          chart.update();
+          graphCounter = 0;
+      }
+  }
 }
 
 async function sendCommand(cmd) {
   await fetch(`/${cmd}`, { method: "POST" });
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Update the UI every 200ms
-setInterval(update, 300);
+setInterval(update, 250);
 update();
 
-// === PACE GRAPH ===
 
+
+// === PACE GRAPH ===
 let paceData = [];
 let timeLabels = [];
 let chart;
