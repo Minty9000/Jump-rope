@@ -1,91 +1,65 @@
-/* GENERAL THEME */
+/* === GLOBAL THEME === */
 body {
   margin: 0;
-  padding: 30px;
   font-family: system-ui, sans-serif;
   background: linear-gradient(135deg, #d9f4f4, #c7e7e7, #b6dddd);
   color: #0f172a;
   text-align: center;
 }
 
-/* MAIN TITLE */
-.title {
-  font-size: 2.6rem;
-  font-weight: 700;
-  margin-bottom: 20px;
-  color: #0d2c2c;
-}
+/* === HEADERS === */
+.title { font-size: 2.6rem; font-weight: 700; margin-bottom: 10px; color: #0d2c2c; }
+.subheader { margin-top: 15px; font-weight: 700; color: #103434; }
 
-/* WEIGHT INPUT SECTION */
-.weight-box {
-  margin-bottom: 25px;
-}
-
-.weight-box label {
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: #103838;
-}
-
-.weight-box input {
+/* === INPUTS === */
+.weight-box { margin-bottom: 10px; }
+.weight-box label { font-weight: 600; font-size: 1.1rem; color: #103838; }
+.weight-box input,
+#goalInput {
   padding: 10px 15px;
   font-size: 1.1rem;
   border-radius: 12px;
   border: 2px solid #7fbebe;
-  outline: none;
-  margin-top: 8px;
   background: white;
+  outline: none;
   transition: 0.2s;
+  margin-top: 8px;
 }
+input:focus { border-color: #5ca9a9; background: #f5ffff; }
 
-.weight-box input:focus {
-  border-color: #5ca9a9;
-  background: #f5ffff;
-}
-
-/* STATS GRID */
+/* === STATS GRID === */
 .stats-section {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
   max-width: 650px;
-  margin: 0 auto 25px auto;
+  margin: 0 auto 25px;
 }
 
-/* STAT CARDS */
-.stat-card {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 25px;
+/* === STAT CARDS === */
+.stat-card,
+.side-card {
+  background: rgba(255,255,255,0.9);
+  padding: 20px;
   border-radius: 18px;
-  border: 2px solid rgba(130, 190, 190, 0.45);
+  border: 2px solid rgba(130,190,190,0.45);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   transition: 0.25s;
 }
 
+.stat-card { padding: 25px; }
 .stat-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 7px 18px rgba(0,0,0,0.18);
 }
 
-.big {
-  font-size: 3.4rem;
-  font-weight: 700;
-  color: #0f2b2b;
-}
+.big { font-size: 3.4rem; font-weight: 700; color: #0f2b2b; }
+.sub { font-size: 1rem; color: #1e4040; }
 
-.sub {
-  font-size: 1rem;
-  color: #1e4040;
-}
-
-/* BUTTONS */
+/* === BUTTONS === */
 .btn-wrapper {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 20px;
+  display: flex; justify-content: center; gap: 12px;
 }
-
 .btn {
   background: #8dd1d1;
   border: 2px solid #6ebcbc;
@@ -97,48 +71,104 @@ body {
   font-weight: 600;
   transition: background 0.2s, transform 0.15s;
 }
+.btn:hover { background: #7cc5c5; }
+.btn:active { background: #5fa8a8; transform: scale(0.94); border-color: #559999; }
 
-/* hover effect */
-.btn:hover {
-  background: #7cc5c5;
-}
-
-/* PRESS-DOWN animation */
-.btn:active {
-  background: #5fa8a8; /* darker mint */
-  transform: scale(0.94);   /* shrink slightly */
-  border-color: #559999;
-}
-
-/* LAPS */
-.subheader {
-  margin-top: 25px;
-  font-weight: 700;
-  color: #103434;
-}
-
-#laps {
-  margin-top: 10px;
-  max-width: 480px;
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 12px;
-}
-
-.lap-entry {
-  padding: 12px;
-  border-bottom: 1px solid #8ec8c8;
-  display: flex;
-  justify-content: space-between;
-  color: #0f2b2b;
-}
+/* === CHART CONTAINER === */
 .graph-container {
   width: 90%;
   max-width: 600px;
-  margin: 20px auto 40px auto;
-  background: rgba(255, 255, 255, 0.8);
+  margin: 20px auto;
   padding: 20px;
   border-radius: 18px;
-  border: 2px solid rgba(130, 190, 190, 0.4);
+  background: rgba(255,255,255,0.8);
+  border: 2px solid rgba(130,190,190,0.4);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* === PAGE LAYOUT (LEFT / CENTER / RIGHT) === */
+.page-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.main-content {
+  flex: 1;
+  max-width: 1000px;
+  min-width: 750px;
+  margin: 0 40px;
+}
+
+/* Unified side panel layout */
+.side-panel {
+  width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: sticky;
+  top: 120px;
+}
+.left-panel {
+  left: 60px;
+}
+.right-panel {
+  right: 60px;
+}
+
+/* === LAPS === */
+#laps {
+  margin-top: 8px;
+  width: 100%;
+  max-height: 400px;
+  overflow-y: auto;
+  text-align: left;
+  padding: 0 10px;
+}
+.lap-entry {
+  padding: 6px 0;
+  border-bottom: 1px solid #8ec8c8;
+  font-size: 0.95rem;
+}
+
+/* === CALORIE CUP === */
+.calorie-cup {
+  position: relative;
+  width: 120px;
+  height: 260px;
+  margin: 20px auto;
+  border: 4px solid rgba(255,128,0,0.7);
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(4px);
+}
+
+#waterFill {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, #ff9c33, #ff6a00);
+  transition: height 0.6s ease-in-out;
+}
+
+/* Animated waves */
+.wave {
+  position: absolute;
+  bottom: 0;
+  width: 200%;
+  height: 40px;
+  background: rgba(255,255,255,0.5);
+  opacity: 0.5;
+  border-radius: 50%;
+  animation: wave-move 4s linear infinite;
+}
+.wave1 { animation-duration: 5s; }
+.wave2 { animation-duration: 6s; opacity: 0.35; animation-delay: -1.5s; }
+
+@keyframes wave-move {
+  to { transform: translateX(-50%); }
 }

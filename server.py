@@ -17,7 +17,7 @@ FRAME_DURATION = 0.15
 FRAME_SIZE = int(sr * FRAME_DURATION)
 
 threshold = 0.87
-cooldown_time = 0.25
+cooldown_time = 0.27
 cooldown_frames = int(cooldown_time / FRAME_DURATION)
 counting_enabled = False
 jump_count = 0

@@ -28,6 +28,9 @@ async function update() {
   const p = await fetch("/pace").then(r => r.json());
   const laps = await fetch("/laps").then(r => r.json());
   const counting = c.counting;
+  const goal = Number(document.getElementById("goalInput").value) || 0;
+
+  
 
   const weightLbs = Number(document.getElementById("weightInput").value) || 0;
   const weightKg = lbsToKg(weightLbs);
@@ -38,6 +41,7 @@ async function update() {
   document.getElementById("timer").textContent = formatTime(t.time);
   document.getElementById("pace").textContent = `${p.pace} JPM`;
   document.getElementById("calories").textContent = calories;
+  
 
   // Laps
   let lapHtml = "";
@@ -48,6 +52,15 @@ async function update() {
         <span>${formatTime(lap.time)} – ${lap.jumps} jumps</span>
       </div>`;
   });
+  document.getElementById("calorieGoal").textContent = goal;
+  document.getElementById("calorieCurrent").textContent = calories;
+
+  if (goal > 0) {
+      const percent = Math.min((calories / goal) * 100, 100);
+      document.getElementById("waterFill").style.height = percent + "%";
+  } else {
+      document.getElementById("waterFill").style.height = "0%";
+  }
   // update pace graph
   document.getElementById("laps").innerHTML = lapHtml;
 
@@ -63,7 +76,7 @@ async function update() {
   if (counting) {
       graphCounter++;
       // Update graph every 10 sec (50 cycles of 200ms)
-      if (graphCounter >= 42) {
+      if (graphCounter >= 34) {
           elapsedSeconds += 10;      // clean X-axis step
           timeLabels.push(elapsedSeconds);
           paceData.push(p.pace);
@@ -75,6 +88,7 @@ async function update() {
           graphCounter = 0;
       }
   }
+
 }
 
 async function sendCommand(cmd) {
@@ -103,7 +117,7 @@ async function sendCommand(cmd) {
 
 
 // Update the UI every 200ms
-setInterval(update, 250);
+setInterval(update, 300);
 update();
 
 

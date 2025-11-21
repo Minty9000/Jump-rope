@@ -7,55 +7,83 @@
 </head>
 
 <body>
+  <div class="page-wrapper">
+    <div class="side-panel left-panel">
+    <div class="side-card">
 
-  <h1 class="title">Jump Rope Tracker</h1>
+    <h2 class="subheader">Calorie Goal</h2>
+    <input type="number" id="goalInput" placeholder="Enter goal" />
 
-  <!-- Weight Input -->
-  <div class="weight-box">
-    <label for="weightInput">Your Weight (lbs):</label>
-    <input type="number" id="weightInput" placeholder="Enter weight" />
-  </div>
-
-  <!-- Stats Section -->
-  <div class="stats-section">
-
-    <div class="stat-card">
-      <div class="big" id="jumpCount">0</div>
-      <div class="sub">Total Jumps</div>
+    <!-- Cup Container -->
+    <div class="calorie-cup">
+        <div id="waterFill"></div>
+        <div class="wave wave1"></div>
+        <div class="wave wave2"></div>
     </div>
 
-    <div class="stat-card">
-      <div class="big" id="pace">0 JPM</div>
-      <div class="sub">Jumps / Minute</div>
+    <div class="goal-text">
+       <span id="calorieCurrent">0</span> /
+       <span id="calorieGoal">0</span> kcal
     </div>
 
-    <div class="stat-card">
-      <div class="big" id="timer">00:00</div>
-      <div class="sub">Elapsed Time</div>
+    </div>
     </div>
 
-    <div class="stat-card">
-      <div class="big" id="calories">0</div>
-      <div class="sub">Calories Burned</div>
+  <div class="main-content">
+    <h1 class="title">Jump Rope Tracker</h1>
+
+    <!-- Weight Input -->
+    <div class="weight-box">
+      <label for="weightInput">Your Weight (lbs):</label>
+      <input type="number" id="weightInput" placeholder="Enter weight" />
     </div>
 
-  </div>
-  <h2 class="subheader">Pace Graph</h2>
-  <div class="graph-container">
-    <canvas id="paceChart"></canvas>
-  </div>
+    <!-- Stats Section -->
+    <div class="stats-section">
 
-  <!-- Buttons -->
-  <div class="btn-wrapper">
-    <button class="btn" onclick="sendCommand('start')">Start</button>
-    <button class="btn" onclick="sendCommand('stop')">Stop</button>
-    <button class="btn" onclick="sendCommand('reset')">Reset</button>
-    <button class="btn" onclick="sendCommand('lap')">Lap</button>
-  </div>
+      <div class="stat-card">
+        <div class="big" id="jumpCount">0</div>
+        <div class="sub">Total Jumps</div>
+      </div>
 
-  <!-- Laps -->
-  <h2 class="subheader">Laps</h2>
-  <div id="laps"></div>
+      <div class="stat-card">
+        <div class="big" id="pace">0 JPM</div>
+        <div class="sub">Jumps / Minute</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="big" id="timer">00:00</div>
+        <div class="sub">Elapsed Time</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="big" id="calories">0</div>
+        <div class="sub">Calories Burned</div>
+      </div>
+    </div>
+
+    <!-- Pace Graph -->
+    <h2 class="subheader">Pace Graph</h2>
+    <div class="graph-container">
+      <canvas id="paceChart"></canvas>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-wrapper">
+      <button class="btn" onclick="sendCommand('start')">Start</button>
+      <button class="btn" onclick="sendCommand('stop')">Stop</button>
+      <button class="btn" onclick="sendCommand('reset')">Reset</button>
+      <button class="btn" onclick="sendCommand('lap')">Lap</button>
+    </div>
+  </div>
+  
+
+  <div class="side-panel right-panel">
+    <!-- Right Sidebar: Laps -->
+    <h2 class="subheader">Laps</h2>
+    <div id="laps"></div>
+  </div>
+  </div>
 
   <script src="app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
