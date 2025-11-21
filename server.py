@@ -176,12 +176,21 @@ def pace():
 ### RUN EVERYTHING ###
 
 if __name__ == "__main__":
-    audio_thread = threading.Thread(target=start_audio_stream, daemon=True)
-    audio_thread.start()
+    import os
+
+    # Only start audio thread locally, not on Render
+    if os.environ.get("RENDER") != "true":
+        audio_thread = threading.Thread(target=start_audio_stream, daemon=True)
+        audio_thread.start()
+        print("🎧 Local audio capture enabled")
+
+    # Reduce logging noise
     import logging
     log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR) 
+    log.setLevel(logging.ERROR)
 
-    print("🎧 Listening for jumps... Backend + Web UI running")
+    print("🔥 Backend running")
 
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    # Render requires dynamic port
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=False)
