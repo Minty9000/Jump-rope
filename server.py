@@ -1,6 +1,14 @@
 import numpy as np
-import sounddevice as sd
-import librosa
+import os
+
+USE_AUDIO = os.environ.get("RENDER") != "true"
+
+if USE_AUDIO:
+    import sounddevice as sd
+    import librosa
+else:
+    sd = None
+    librosa = None
 from flask import Flask, jsonify, send_from_directory, request
 import threading
 import time
@@ -75,6 +83,9 @@ def audio_callback(indata, frames, time_info, status):
 ### START AUDIO STREAM ###
 
 def start_audio_stream():
+    if not USE_AUDIO:
+        print("⚠️ Audio disabled on Render.")
+        return
     with sd.InputStream(
         callback=audio_callback,
         channels=1,
@@ -176,21 +187,15 @@ def pace():
 ### RUN EVERYTHING ###
 
 if __name__ == "__main__":
-    import os
-
-    # Only start audio thread locally, not on Render
-    if os.environ.get("RENDER") != "true":
+    if USE_AUDIO:
         audio_thread = threading.Thread(target=start_audio_stream, daemon=True)
         audio_thread.start()
         print("🎧 Local audio capture enabled")
+    else:
+        print("🌐 Running on Render — audio disabled")
 
-    # Reduce logging noise
     import logging
-    log = logging.getLogger('werkzeug')
-    log.setLevel(logging.ERROR)
+    logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-    print("🔥 Backend running")
-
-    # Render requires dynamic port
     port = int(os.environ.get("PORT", 5001))
     app.run(host="0.0.0.0", port=port, debug=False)
