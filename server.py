@@ -2,7 +2,7 @@ import numpy as np
 import os
 
 USE_AUDIO = not os.environ.get("ON_RENDER", "false") == "true"
-print("RENDER env var:", os.environ.get("RENDER"))
+print("ON_RENDER:", os.environ.get("ON_RENDER"))
 print("USE_AUDIO:", USE_AUDIO)
 
 if USE_AUDIO:
