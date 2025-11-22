@@ -15,9 +15,20 @@ import time
 
 ### LOAD REFERENCE HIT ###
 
-ref, sr = librosa.load("Jump_hit.wav.m4a", sr=None)
-ref_mfcc = librosa.feature.mfcc(y=ref, sr=sr, n_mfcc=13)
-ref_vec = np.mean(ref_mfcc, axis=1)
+ref = None
+sr = None
+ref_vec = None
+
+if USE_AUDIO:
+    print("🎵 Loading reference jump sound...")
+    try:
+        ref, sr = librosa.load("Jump_hit.wav.m4a", sr=None)
+        ref_mfcc = librosa.feature.mfcc(y=ref, sr=sr, n_mfcc=13)
+        ref_vec = np.mean(ref_mfcc, axis=1)
+    except Exception as e:
+        print("❌ Error loading reference audio:", e)
+else:
+    print("🌐 Render environment detected — skipping audio load")
 
 ### REAL-TIME SETTINGS ###
 
