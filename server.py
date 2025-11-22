@@ -157,6 +157,15 @@ def timer():
 def get_laps():
     return jsonify({"laps": laps})
 
+@app.route("/add_jump", methods=["POST"])
+def add_jump():
+    global jump_count
+    data = request.get_json() or {}
+    delta = int(data.get("delta", 1))
+    if delta < 0:
+        delta = 0
+    jump_count += delta
+    return jsonify({"count": jump_count})
 
 @app.route("/start", methods=["POST"])
 def start_timer():

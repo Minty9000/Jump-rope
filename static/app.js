@@ -1,5 +1,77 @@
 let graphCounter = 0;
 let elapsedSeconds = 0;   // X-axis will now be 0, 10, 20, 30, ...
+// ==== Browser-side jump detection ====
+let audioContext = null;
+let micSource = null;
+let processorNode = null;
+
+let lastJumpTime = 0;
+const JUMP_COOLDOWN_MS = 250;   // min time between jumps (ms)
+const JUMP_RMS_THRESHOLD = 0.12; // sensitivity — tweak if needed
+
+async function startJumpDetection() {
+  try {
+    if (audioContext) {
+      return; // already running
+    }
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    micSource = audioContext.createMediaStreamSource(stream);
+    processorNode = audioContext.createScriptProcessor(2048, 1, 1);
+
+    processorNode.onaudioprocess = (event) => {
+      const input = event.inputBuffer.getChannelData(0);
+
+      // Compute RMS of this audio chunk
+      let sum = 0;
+      for (let i = 0; i < input.length; i++) {
+        sum += input[i] * input[i];
+      }
+      const rms = Math.sqrt(sum / input.length);
+
+      const now = performance.now();
+      if (
+        rms > JUMP_RMS_THRESHOLD &&
+        now - lastJumpTime > JUMP_COOLDOWN_MS
+      ) {
+        lastJumpTime = now;
+        // Tell backend to increment jump_count by 1
+        fetch("/add_jump", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ delta: 1 }),
+        }).catch((err) => console.error("add_jump error:", err));
+      }
+    };
+
+    micSource.connect(processorNode);
+    processorNode.connect(audioContext.destination); // or a GainNode with gain 0
+
+    console.log("🎧 Browser jump detection started");
+  } catch (err) {
+    console.error("Mic error:", err);
+    alert("Could not access microphone. Please allow mic permissions.");
+  }
+}
+
+function stopJumpDetection() {
+  if (processorNode) {
+    processorNode.disconnect();
+    processorNode.onaudioprocess = null;
+    processorNode = null;
+  }
+  if (micSource) {
+    micSource.disconnect();
+    micSource = null;
+  }
+  if (audioContext) {
+    audioContext.close();
+    audioContext = null;
+  }
+  console.log("🛑 Browser jump detection stopped");
+}
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60).toString().padStart(2, "0");
   const s = Math.floor(seconds % 60).toString().padStart(2, "0");
@@ -93,6 +165,12 @@ async function update() {
 
 async function sendCommand(cmd) {
   await fetch(`/${cmd}`, { method: "POST" });
+
+  if (cmd === "start") {
+    startJumpDetection();
+  } else if (cmd === "stop" || cmd === "reset") {
+    stopJumpDetection();
+  }
 }
 
 
