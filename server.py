@@ -1,7 +1,9 @@
 import numpy as np
 import os
 
-USE_AUDIO = os.environ.get("RENDER") != "true"
+USE_AUDIO = not os.environ.get("ON_RENDER", "false") == "true"
+print("RENDER env var:", os.environ.get("RENDER"))
+print("USE_AUDIO:", USE_AUDIO)
 
 if USE_AUDIO:
     import sounddevice as sd
