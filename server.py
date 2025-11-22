@@ -33,7 +33,18 @@ else:
 ### REAL-TIME SETTINGS ###
 
 FRAME_DURATION = 0.15
-FRAME_SIZE = int(sr * FRAME_DURATION)
+if USE_AUDIO and sr is not None:
+    FRAME_DURATION = 0.15
+    FRAME_SIZE = int(sr * FRAME_DURATION)
+
+    threshold = 0.87
+    cooldown_time = 0.27
+    cooldown_frames = int(cooldown_time / FRAME_DURATION)
+else:
+    FRAME_DURATION = 0
+    FRAME_SIZE = 0
+    threshold = 0
+    cooldown_frames = 0
 
 threshold = 0.87
 cooldown_time = 0.27
